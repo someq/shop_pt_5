@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #444444;
+    /* отступ, чтобы компенсировать высоту навбара */
+    margin-top: 60px;
+}
+
+.container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 900px;
+}
+
+.navbar {
+    display: block;
+    background: #6a7dff;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    font-size: 0;
+    box-sizing: border-box;
+    padding: 7px 30px;
+}
+
+.menu {
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    color: #fffee8;
+}
+
+.menu li {
+    display: inline-block;
+}
+
+.menu a {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+    padding: 5px 15px;
+}
+
+.menu a:hover {
+    color: #ffc122;
+    text-decoration: underline;
+}
+
+.pre {
+    white-space: pre;
+}
+
+.error {
+    font-weight: bold;
+    color: red;
+    margin-top: 2px;
+}
