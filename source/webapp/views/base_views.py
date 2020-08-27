@@ -21,7 +21,7 @@ class SearchView(DjangoListView):
         return context
 
     def get_queryset(self):
-        data = super().get_queryset()
+        data = super(SearchView, self).get_queryset()
         query = self.get_query(self.search_value)
         data = data.filter(query)
         return data

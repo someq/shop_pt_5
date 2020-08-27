@@ -8,8 +8,10 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ product.name }}</h1>
-    <p>Категория: {{ product.get_category_display }}</p>
-    <p>Осталось: {{ product.amount }} по {{ product.price  }} сом</p>
-    <p class="pre">{{ product.description }}</p>
+    <div class="box">
+        <h1>{{ product.name }}</h1>
+        <p>Категория: {{ product.get_category_display }}</p>
+        <p>Осталось: {{ product.amount }} по {{ product.price  }} сом</p>
+        <p class="pre">{{ product.description }}</p>
+    </div>
 {% endblock %}

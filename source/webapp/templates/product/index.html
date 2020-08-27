@@ -2,11 +2,19 @@
 
 {% block content %}
     <h1>Товары:</h1>
+    {% if is_paginated %}
+        {% include 'partial/pagination.html' %}
+    {% endif %}
     {% for product in products %}
-        <h3><a href="{% url "product_view" product.pk %}">{{ product.name }}</a></h3>
-        <p>Категория: {{ product.get_category_display }}</p>
-        <p>Осталось: {{ product.amount }} по {{ product.price  }} сом</p>
-        <p><a href="{% url 'product_update' product.pk %}">Update</a></p>
-        <p><a href="{% url 'product_delete' product.pk %}">Delete</a></p>
+        <div class="box">
+            <h3><a href="{% url "product_view" product.pk %}">{{ product.name }}</a></h3>
+            <p>Категория: {{ product.get_category_display }}</p>
+            <p>Осталось: {{ product.amount }} по {{ product.price  }} сом</p>
+            <p><a href="{% url 'product_update' product.pk %}">Update</a></p>
+            <p><a href="{% url 'product_delete' product.pk %}">Delete</a></p>
+        </div>
     {% endfor %}
+    {% if is_paginated %}
+        {% include 'partial/pagination.html' %}
+    {% endif %}
 {% endblock %}
