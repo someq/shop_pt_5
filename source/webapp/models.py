@@ -1,5 +1,5 @@
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.db.models import Sum, F, ExpressionWrapper as E
 
 
 DEFAULT_CATEGORY = 'other'
@@ -26,3 +26,39 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
+
+
+class Cart(models.Model):
+    product = models.ForeignKey('webapp.Product', on_delete=models.CASCADE,
+                                verbose_name='Товар', related_name='in_cart')
+    qty = models.IntegerField(verbose_name='Количество', default=0)
+
+    def __str__(self):
+        return f'{self.product.name} - {self.qty}'
+
+    def get_total(self):
+        return self.qty * self.product.price
+
+    # @classmethod
+    # def get_with_total(cls):
+    #     # запрос, так быстрее
+    #     total_output_field = models.DecimalField(max_digits=10, decimal_places=2)
+    #     total_expr = E(F('qty') * F('product__price'), output_field=total_output_field)
+    #     return cls.objects.annotate(total=total_expr)
+
+    @classmethod
+    def get_cart_total(cls):
+        total = 0
+        for item in cls.objects.all():
+            total += item.get_total()
+        return total
+
+    # @classmethod
+    # def get_cart_total(cls):
+    #     # запрос, так быстрее
+    #     total = cls.get_with_total().aggregate(cart_total=Sum('total'))
+    #     return total['cart_total']
+
+    class Meta:
+        verbose_name = 'Товар в корзине'
+        verbose_name_plural = 'Товары в корзине'
