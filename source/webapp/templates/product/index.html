@@ -12,6 +12,7 @@
             <p>Осталось: {{ product.amount }} по {{ product.price  }} сом</p>
             <p><a href="{% url 'product_update' product.pk %}">Update</a></p>
             <p><a href="{% url 'product_delete' product.pk %}">Delete</a></p>
+            {% include 'partial/cart_add_form.html' %}
         </div>
     {% endfor %}
     {% if is_paginated %}

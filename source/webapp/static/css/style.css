@@ -7,6 +7,11 @@ body {
     margin-top: 60px;
 }
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
 .container {
     margin: 0 auto;
     width: 100%;
@@ -157,4 +162,14 @@ body {
 
 input[type='submit']:hover {
     cursor: pointer;
+}
+
+.cart-table th,
+.cart-table td {
+    border: solid 1px gray;
+    padding: 5px 10px;
+}
+
+.text-right {
+    text-align: right;
 }

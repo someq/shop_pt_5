@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Корзина{% endblock %}
+{% block content %}
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Итого</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart %}
+                <tr>
+                    <td>
+                        {{ item.product.name }}
+                        (<a href="{% url 'cart_delete' item.pk %}">Удалить</a>)
+                    </td>
+                    <td class="text-right">{{ item.product.price }}</td>
+                    <td class="text-right">{{ item.qty }}</td>
+                    <td class="text-right">{{ item.get_total }}</td>
+{#                    при запросе с annotate #}
+{#                    <td>{{ item.total }}</td>#}
+                </tr>
+            {% endfor %}
+            <tr>
+                <th colspan="3" class="text-right">Итого</th>
+                <th class="text-right">{{ cart_total }}</th>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
