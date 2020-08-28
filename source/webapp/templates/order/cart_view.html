@@ -14,14 +14,15 @@
             {% for item in cart %}
                 <tr>
                     <td>
-                        {{ item.product.name }}
-                        (<a href="{% url 'cart_delete' item.pk %}">Удалить</a>)
+                        <a href="{% url 'product_view' item.product.pk %}">{{ item.product.name }}</a>
+                        (<a href="{% url 'cart_delete_one' item.pk %}">Удалить Один</a>,
+                        <a href="{% url 'cart_delete' item.pk %}">Удалить Все</a>)
                     </td>
                     <td class="text-right">{{ item.product.price }}</td>
                     <td class="text-right">{{ item.qty }}</td>
-                    <td class="text-right">{{ item.get_total }}</td>
+{#                    <td class="text-right">{{ item.get_total }}</td> #}
 {#                    при запросе с annotate #}
-{#                    <td>{{ item.total }}</td>#}
+                    <td>{{ item.total }}</td>
                 </tr>
             {% endfor %}
             <tr>

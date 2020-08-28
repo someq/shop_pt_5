@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from webapp.views import IndexView, ProductView, ProductCreateView, \
-    ProductUpdateView, ProductDeleteView, CartView, CartAddView, CartDeleteView
+    ProductUpdateView, ProductDeleteView, CartView, CartAddView, \
+    CartDeleteView, CartDeleteOneView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +30,5 @@ urlpatterns = [
     path('cart/', CartView.as_view(), name='cart_view'),
     path('product/<int:pk>/add-to-cart/', CartAddView.as_view(), name='product_add_to_cart'),
     path('cart/<int:pk>/delete/', CartDeleteView.as_view(), name='cart_delete'),
+    path('cart/<int:pk>/delete-one/', CartDeleteOneView.as_view(), name='cart_delete_one'),
 ]

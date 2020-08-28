@@ -8,15 +8,15 @@ from webapp.models import Cart, Product
 
 
 class CartView(ListView):
-    model = Cart
+    # model = Cart
     template_name = 'order/cart_view.html'
     context_object_name = 'cart'
 
     # вместо model = Cart
     # для выполнения запроса в базу через модель
     # вместо подсчёта total-ов в Python-е.
-    # def get_queryset(self):
-    #     return Cart.get_with_total()
+    def get_queryset(self):
+        return Cart.get_with_product()
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
@@ -33,9 +33,9 @@ class CartAddView(CreateView):
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        qty = 1
+        # qty = 1
         # бонус
-        # qty = form.cleaned_data.get('qty', 1)
+        qty = form.cleaned_data.get('qty', 1)
 
         try:
             cart_product = Cart.objects.get(product=self.product)
@@ -53,9 +53,9 @@ class CartAddView(CreateView):
 
     def get_success_url(self):
         # бонус
-        # next = self.request.GET.get('next')
-        # if next:
-        #     return next
+        next = self.request.GET.get('next')
+        if next:
+            return next
         return reverse('index')
 
 
@@ -67,15 +67,24 @@ class CartDeleteView(DeleteView):
     def get(self, request, *args, **kwargs):
         return self.delete(request, *args, **kwargs)
 
-    # бонус
-    # def delete(self, request, *args, **kwargs):
-    #     self.object = self.get_object()
-    #     success_url = self.get_success_url()
-    # 
-    #     self.object.qty -= 1
-    #     if self.object.qty < 1:
-    #         self.object.delete()
-    #     else:
-    #         self.object.save()
-    # 
-    #     return HttpResponseRedirect(success_url)
+
+# бонус
+class CartDeleteOneView(DeleteView):
+    model = Cart
+    success_url = reverse_lazy('cart_view')
+
+    # удаление без подтверждения
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        self.object.qty -= 1
+        if self.object.qty < 1:
+            self.object.delete()
+        else:
+            self.object.save()
+
+        return HttpResponseRedirect(success_url)

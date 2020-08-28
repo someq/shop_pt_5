@@ -36,28 +36,32 @@ class Cart(models.Model):
     def __str__(self):
         return f'{self.product.name} - {self.qty}'
 
-    def get_total(self):
-        return self.qty * self.product.price
-
-    # @classmethod
-    # def get_with_total(cls):
-    #     # запрос, так быстрее
-    #     total_output_field = models.DecimalField(max_digits=10, decimal_places=2)
-    #     total_expr = E(F('qty') * F('product__price'), output_field=total_output_field)
-    #     return cls.objects.annotate(total=total_expr)
+    # def get_total(self):
+    #     return self.qty * self.product.price
 
     @classmethod
-    def get_cart_total(cls):
-        total = 0
-        for item in cls.objects.all():
-            total += item.get_total()
-        return total
+    def get_with_total(cls):
+        # запрос, так быстрее
+        total_output_field = models.DecimalField(max_digits=10, decimal_places=2)
+        total_expr = E(F('qty') * F('product__price'), output_field=total_output_field)
+        return cls.objects.annotate(total=total_expr)
+
+    @classmethod
+    def get_with_product(cls):
+        return cls.get_with_total().select_related('product')
 
     # @classmethod
     # def get_cart_total(cls):
-    #     # запрос, так быстрее
-    #     total = cls.get_with_total().aggregate(cart_total=Sum('total'))
-    #     return total['cart_total']
+    #     total = 0
+    #     for item in cls.objects.all():
+    #         total += item.get_total()
+    #     return total
+
+    @classmethod
+    def get_cart_total(cls):
+        # запрос, так быстрее
+        total = cls.get_with_total().aggregate(cart_total=Sum('total'))
+        return total['cart_total']
 
     class Meta:
         verbose_name = 'Товар в корзине'
