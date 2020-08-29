@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView
 
 from webapp.forms import CartAddForm, OrderForm
-from webapp.models import Cart, Product, Order
+from webapp.models import Cart, Product, Order, OrderProduct
 
 
 class CartView(ListView):
@@ -95,20 +95,45 @@ class OrderCreateView(CreateView):
     form_class = OrderForm
     success_url = reverse_lazy('index')
 
+    # def form_valid(self, form):
+    #     response = super().form_valid(form)
+    #     order = self.object
+    #     # неоптимально: на каждый товар в корзине идёт 3 запроса:
+    #     # * добавить товар в заказ
+    #     # * обновить остаток товара
+    #     # * удалить товар из корзины
+    #     for item in Cart.objects.all():
+    #         product = item.product
+    #         qty = item.qty
+    #         order.order_products.create(product=product, qty=qty)
+    #         product.amount -= qty
+    #         product.save()
+    #         item.delete()
+    #     return response
+
     def form_valid(self, form):
         response = super().form_valid(form)
         order = self.object
-        # неоптимально: на каждый товар в корзине идёт 3 запроса:
-        # * добавить товар в заказ
-        # * обновить остаток товара
-        # * удалить товар из корзины
-        for item in Cart.objects.all():
+        # оптимально:
+        # цикл сам ничего не создаёт, не обновляет, не удаляет
+        # цикл работает только с объектами в памяти
+        # и заполняет два списка: products и order_products
+        cart_products = Cart.objects.all()
+        products = []
+        order_products = []
+        for item in cart_products:
             product = item.product
             qty = item.qty
-            order.order_products.create(product=product, qty=qty)
             product.amount -= qty
-            product.save()
-            item.delete()
+            products.append(product)
+            order_product = OrderProduct(order=order, product=product, qty=qty)
+            order_products.append(order_product)
+        # массовое создание всех товаров в заказе
+        OrderProduct.objects.bulk_create(order_products)
+        # массовое обновление остатка у всех товаров
+        Product.objects.bulk_update(products, ('amount',))
+        # массовое удаление всех товаров в корзине
+        cart_products.delete()
         return response
 
     def form_invalid(self, form):
