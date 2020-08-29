@@ -31,4 +31,7 @@
             </tr>
         </tbody>
     </table>
+    <h3>Оформить заказ:</h3>
+    {% url 'order_create' as action_url %}
+    {% include 'partial/form.html' with action_url=action_url form_method='post' button_text='Оформить заказ' %}
 {% endblock %}

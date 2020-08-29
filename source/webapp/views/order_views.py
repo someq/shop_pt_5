@@ -1,10 +1,9 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView
 
-from webapp.forms import CartAddForm
-from webapp.models import Cart, Product
+from webapp.forms import CartAddForm, OrderForm
+from webapp.models import Cart, Product, Order
 
 
 class CartView(ListView):
@@ -21,6 +20,7 @@ class CartView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['cart_total'] = Cart.get_cart_total()
+        context['form'] = OrderForm()
         return context
 
 
@@ -46,10 +46,10 @@ class CartAddView(CreateView):
             if qty <= self.product.amount:
                 Cart.objects.create(product=self.product, qty=qty)
 
-        return HttpResponseRedirect(self.get_success_url())
+        return redirect(self.get_success_url())
 
     def form_invalid(self, form):
-        return HttpResponseRedirect(self.get_success_url())
+        return redirect(self.get_success_url())
 
     def get_success_url(self):
         # бонус
@@ -87,4 +87,29 @@ class CartDeleteOneView(DeleteView):
         else:
             self.object.save()
 
-        return HttpResponseRedirect(success_url)
+        return redirect(success_url)
+
+
+class OrderCreateView(CreateView):
+    model = Order
+    form_class = OrderForm
+    success_url = reverse_lazy('index')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        order = self.object
+        # неоптимально: на каждый товар в корзине идёт 3 запроса:
+        # * добавить товар в заказ
+        # * обновить остаток товара
+        # * удалить товар из корзины
+        for item in Cart.objects.all():
+            product = item.product
+            qty = item.qty
+            order.order_products.create(product=product, qty=qty)
+            product.amount -= qty
+            product.save()
+            item.delete()
+        return response
+
+    def form_invalid(self, form):
+        return redirect('cart_view')
