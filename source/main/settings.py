@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
+    'accounts',
     'webapp',
 ]
 
@@ -122,3 +123,32 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+LOGIN_REDIRECT_URL = 'webapp:index'
+LOGOUT_REDIRECT_URL = 'webapp:index'
+
+LOGIN_URL = 'accounts:login'
+
+
+# SMTP settings
+
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '445d89a4366454'
+EMAIL_HOST_PASSWORD = '656973300d923b'
+EMAIL_PORT = '2525'
+DEFAULT_FROM_EMAIL = 'admin@localhost'
+
+
+# HOST
+
+BASE_HOST = 'http://localhost:8000'
+
+
+# Email Activation
+
+ACTIVATE_USERS_EMAIL = False  # True
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_URL = '/media/'
