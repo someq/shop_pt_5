@@ -173,3 +173,45 @@ input[type='submit']:hover {
 .text-right {
     text-align: right;
 }
+
+.message {
+    border-radius: 5px;
+    border: solid 1px;
+    padding: 5px 10px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.message:first-child {
+    margin-top: 0;
+}
+
+.message-error {
+    background: rgba(255, 0, 0, 0.15);
+    border-color: darkred;
+    color: darkred;
+}
+
+.message-warning {
+    background: rgba(255, 255, 0, 0.15);
+    border-color: goldenrod;
+    color: goldenrod;
+}
+
+.message-success {
+    background: rgba(0, 255, 0, 0.15);
+    border-color: green;
+    color: green;
+}
+
+.message-info {
+    background: rgba(0, 0, 255, 0.15);
+    border-color: darkblue;
+    color: darkblue;
+}
+
+.message-default {
+    background: rgba(0, 0, 0, 0.15);
+    border-color: #444444;
+    color: #444444;
+}
