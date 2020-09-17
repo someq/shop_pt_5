@@ -35,7 +35,7 @@ class ProductCreateView(CreateView):
     template_name = 'product/product_create.html'
 
     def get_success_url(self):
-        return reverse('product_view', kwargs={'pk': self.object.pk})
+        return reverse('webapp:product_view', kwargs={'pk': self.object.pk})
 
 
 class ProductUpdateView(UpdateView):
@@ -44,10 +44,10 @@ class ProductUpdateView(UpdateView):
     template_name = 'product/product_update.html'
 
     def get_success_url(self):
-        return reverse('product_view', kwargs={'pk': self.object.pk})
+        return reverse('webapp:product_view', kwargs={'pk': self.object.pk})
 
 
 class ProductDeleteView(DeleteView):
     model = Product
     template_name = 'product/product_delete.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('webapp:index')

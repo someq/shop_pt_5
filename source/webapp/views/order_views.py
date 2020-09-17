@@ -56,12 +56,12 @@ class CartAddView(CreateView):
         next = self.request.GET.get('next')
         if next:
             return next
-        return reverse('index')
+        return reverse('webapp:index')
 
 
 class CartDeleteView(DeleteView):
     model = Cart
-    success_url = reverse_lazy('cart_view')
+    success_url = reverse_lazy('webapp:cart_view')
 
     # удаление без подтверждения
     def get(self, request, *args, **kwargs):
@@ -71,7 +71,7 @@ class CartDeleteView(DeleteView):
 # бонус
 class CartDeleteOneView(DeleteView):
     model = Cart
-    success_url = reverse_lazy('cart_view')
+    success_url = reverse_lazy('webapp:cart_view')
 
     # удаление без подтверждения
     def get(self, request, *args, **kwargs):
@@ -93,7 +93,7 @@ class CartDeleteOneView(DeleteView):
 class OrderCreateView(CreateView):
     model = Order
     form_class = OrderForm
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('webapp:index')
 
     # def form_valid(self, form):
     #     response = super().form_valid(form)
@@ -137,4 +137,4 @@ class OrderCreateView(CreateView):
         return response
 
     def form_invalid(self, form):
-        return redirect('cart_view')
+        return redirect('webapp:cart_view')

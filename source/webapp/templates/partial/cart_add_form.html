@@ -1,6 +1,6 @@
-{#<form action="{% url 'product_add_to_cart' product.pk %}" method="post">#}
+{#<form action="{% url 'webapp:product_add_to_cart' product.pk %}" method="post">#}
 {# бонус #}
-<form action="{% url 'product_add_to_cart' product.pk %}?next={{ request.get_full_path }}" method="post"> 
+<form action="{% url 'webapp:product_add_to_cart' product.pk %}?next={{ request.get_full_path }}" method="post"> 
     {% csrf_token %}
 {#    бонус #}
     <input type="number" name="qty" value="1"> 

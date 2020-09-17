@@ -17,24 +17,10 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
-from webapp.views import IndexView, ProductView, ProductCreateView, \
-    ProductUpdateView, ProductDeleteView, CartView, CartAddView, \
-    CartDeleteView, CartDeleteOneView, OrderCreateView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
     path('accounts/', include('accounts.urls')),
-
-    path('', IndexView.as_view(), name='index'),
-    path('product/<int:pk>/', ProductView.as_view(), name='product_view'),
-    path('products/add/', ProductCreateView.as_view(), name='product_create'),
-    path('product/<int:pk>/update/', ProductUpdateView.as_view(), name='product_update'),
-    path('product/<int:pk>/delete/', ProductDeleteView.as_view(), name='product_delete'),
-
-    path('cart/', CartView.as_view(), name='cart_view'),
-    path('product/<int:pk>/add-to-cart/', CartAddView.as_view(), name='product_add_to_cart'),
-    path('cart/<int:pk>/delete/', CartDeleteView.as_view(), name='cart_delete'),
-    path('cart/<int:pk>/delete-one/', CartDeleteOneView.as_view(), name='cart_delete_one'),
-    path('order/create/', OrderCreateView.as_view(), name='order_create'),
+    path('', include('webapp.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

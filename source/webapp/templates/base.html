@@ -18,10 +18,10 @@
     <nav class="navbar">
         <div class="container">
             <ul class="menu">
-                <li><a href="{% url "index" %}">Home</a></li>
-                <li><a href="{% url "cart_view" %}">Cart</a></li>
+                <li><a href="{% url "webapp:index" %}">Home</a></li>
+                <li><a href="{% url "webapp:cart_view" %}">Cart</a></li>
                 {% if request.user.is_authenticated %}
-                    <li><a href="{% url "product_create" %}">Add Product</a></li>
+                    <li><a href="{% url "webapp:product_create" %}">Add Product</a></li>
                     {% block menu %}{% endblock %}
                     <li><a href="{% url 'accounts:detail' request.user.pk %}">
                         Привет, {{ request.user.get_full_name|default:request.user.username }}
@@ -43,7 +43,7 @@
             {% block search %}
                 {% if search_form %}
                     <div class="search-form">
-                        <form action="{% url 'index' %}" method="GET">
+                        <form action="{% url 'webapp:index' %}" method="GET">
                             {{ search_form.search }}
                             <input type="submit" value="Найти">
                         </form>
