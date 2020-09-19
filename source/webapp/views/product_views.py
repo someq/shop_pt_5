@@ -15,24 +15,8 @@ class IndexView(SearchView):
     paginate_by = 5
     context_object_name = 'products'
 
-    def dispatch(self, request, *args, **kwargs):
-        self.test_session_key()
-        self.test_session_data()
-        return super().dispatch(request, *args, **kwargs)
-
     def get_queryset(self):
         return super().get_queryset().filter(amount__gt=0)
-
-    def test_session_key(self):
-        print(self.request.session.session_key)
-        if not self.request.session.session_key:
-            self.request.session.save()
-
-    def test_session_data(self):
-        if 'check' not in self.request.session:
-            self.request.session['check'] = 0
-        self.request.session['check'] += 1
-        print(self.request.session['check'])
 
 
 class ProductView(DetailView):

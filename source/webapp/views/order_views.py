@@ -15,19 +15,13 @@ class CartView(ListView):
     # для выполнения запроса в базу через модель
     # вместо подсчёта total-ов в Python-е.
     def get_queryset(self):
-        return Cart.get_with_product().filter(session_id=self.get_session_key())
+        return Cart.get_with_product()
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context['cart_total'] = Cart.get_cart_total(session_key=self.get_session_key())
+        context['cart_total'] = Cart.get_cart_total()
         context['form'] = OrderForm()
         return context
-
-    def get_session_key(self):
-        session = self.request.session
-        if not session.session_key:
-            session.save()
-        return session.session_key
 
 
 class CartAddView(CreateView):
@@ -44,21 +38,15 @@ class CartAddView(CreateView):
         qty = form.cleaned_data.get('qty', 1)
 
         try:
-            cart_product = Cart.objects.get(product=self.product, session_id=self.get_session_key())
+            cart_product = Cart.objects.get(product=self.product)
             cart_product.qty += qty
             if cart_product.qty <= self.product.amount:
                 cart_product.save()
         except Cart.DoesNotExist:
             if qty <= self.product.amount:
-                Cart.objects.create(product=self.product, qty=qty, session_id=self.get_session_key())
+                Cart.objects.create(product=self.product, qty=qty)
 
         return redirect(self.get_success_url())
-
-    def get_session_key(self):
-        session = self.request.session
-        if not session.session_key:
-            session.save()
-        return session.session_key
 
     def form_invalid(self, form):
         return redirect(self.get_success_url())

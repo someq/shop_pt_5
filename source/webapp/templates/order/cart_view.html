@@ -27,7 +27,7 @@
             {% endfor %}
             <tr>
                 <th colspan="3" class="text-right">Итого</th>
-                <th class="text-right">{{ cart_total|default_if_none:0 }}</th>
+                <th class="text-right">{{ cart_total }}</th>
             </tr>
         </tbody>
     </table>
