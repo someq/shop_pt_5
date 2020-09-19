@@ -33,6 +33,7 @@ class Cart(models.Model):
     product = models.ForeignKey('webapp.Product', on_delete=models.CASCADE,
                                 verbose_name='Товар', related_name='in_cart')
     qty = models.IntegerField(verbose_name='Количество', default=1, validators=[MinValueValidator(1)])
+    session = models.ForeignKey('sessions.Session', on_delete=models.CASCADE, related_name='cart', null=True)
 
     def __str__(self):
         return f'{self.product.name} - {self.qty}'
@@ -59,9 +60,12 @@ class Cart(models.Model):
     #     return total
 
     @classmethod
-    def get_cart_total(cls):
+    def get_cart_total(cls, session_key=None):
         # запрос, так быстрее
-        total = cls.get_with_total().aggregate(cart_total=Sum('total'))
+        cart_products = cls.get_with_total()
+        if session_key:
+            cart_products = cart_products.filter(session_id=session_key)
+        total = cart_products.aggregate(cart_total=Sum('total'))
         return total['cart_total']
 
     class Meta:

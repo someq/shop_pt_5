@@ -152,3 +152,6 @@ ACTIVATE_USERS_EMAIL = False  # True
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/media/'
+
+
+SESSION_ENGINE = 'webapp.session_backend'
