@@ -15,11 +15,15 @@ class CartView(ListView):
     # для выполнения запроса в базу через модель
     # вместо подсчёта total-ов в Python-е.
     def get_queryset(self):
-        return Cart.get_with_product()
+        cart_ids = self.request.session.get('cart_ids', [])
+        return Cart.get_with_product().filter(pk__in=cart_ids)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context['cart_total'] = Cart.get_cart_total()
+        cart_ids = self.request.session.get('cart_ids', [])
+        print(self.request.session.session_key)
+        print(cart_ids)
+        context['cart_total'] = Cart.get_cart_total(ids=cart_ids)
         context['form'] = OrderForm()
         return context
 
@@ -38,13 +42,18 @@ class CartAddView(CreateView):
         qty = form.cleaned_data.get('qty', 1)
 
         try:
-            cart_product = Cart.objects.get(product=self.product)
+            cart_ids = self.request.session.get('cart_ids', [])
+            cart_product = Cart.objects.get(product=self.product, pk__in=cart_ids)
             cart_product.qty += qty
             if cart_product.qty <= self.product.amount:
                 cart_product.save()
         except Cart.DoesNotExist:
             if qty <= self.product.amount:
-                Cart.objects.create(product=self.product, qty=qty)
+                cart_product = Cart.objects.create(product=self.product, qty=qty)
+                cart_ids = self.request.session.get('cart_ids', [])
+                if cart_product.id not in cart_ids:
+                    cart_ids.append(cart_product.id)
+                self.request.session['cart_ids'] = cart_ids
 
         return redirect(self.get_success_url())
 

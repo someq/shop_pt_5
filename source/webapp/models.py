@@ -59,9 +59,12 @@ class Cart(models.Model):
     #     return total
 
     @classmethod
-    def get_cart_total(cls):
+    def get_cart_total(cls, ids=None):
         # запрос, так быстрее
-        total = cls.get_with_total().aggregate(cart_total=Sum('total'))
+        cart_products = cls.get_with_total()
+        if ids is not None:
+            cart_products = cart_products.filter(pk__in=ids)
+        total = cart_products.aggregate(cart_total=Sum('total'))
         return total['cart_total']
 
     class Meta:
