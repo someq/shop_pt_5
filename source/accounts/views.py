@@ -1,38 +1,23 @@
-from django.contrib.auth import get_user_model, authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.views import PasswordChangeView, \
-    PasswordResetView, PasswordResetConfirmView
+from django.contrib.auth.views import PasswordChangeView, LogoutView
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from django.views.generic import View, FormView, DetailView, CreateView, UpdateView
 from django.conf import settings
 
 from accounts.forms import MyUserCreationForm, UserChangeForm, ProfileChangeForm, \
     PasswordChangeForm, PasswordResetEmailForm, PasswordResetForm
+from webapp.models import Cart
 from .models import AuthToken, Profile
 
 
-# def login_view(request):
-#     context = {}
-#     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-#         user = authenticate(request, username=username, password=password)
-#         if user is not None:
-#             login(request, user)
-#             return redirect('webapp:index')
-#         else:
-#             context['has_error'] = True
-#     return render(request, 'registration/login.html', context=context)
-# 
-# 
-# def logout_view(request):
-#     logout(request)
-#     return redirect('webapp:index')
 
 
 class RegisterView(CreateView):
@@ -198,3 +183,11 @@ class UserPasswordResetView(UpdateView):
 
     def get_token(self):
         return AuthToken.get_token(self.kwargs.get('token'))
+
+
+class CartClearLogoutView(LogoutView):
+    @method_decorator(never_cache)
+    def dispatch(self, request, *args, **kwargs):
+        cart_ids = request.session.get('cart_ids', [])
+        Cart.objects.filter(pk__in=cart_ids).delete()
+        return super().dispatch(request, *args, **kwargs)
